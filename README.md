@@ -17,14 +17,11 @@ O desenho da solução e as justificativas técnicas estão no arquivo [ARCHITEC
 Para executar as operações de manutenção do banco de dados (Backup e Status Check):
 
 ```bash
-# Navegue até a pasta ansible
-cd ansible
-
 # Execute o playbook (modo simulação/check primeiro)
-ansible-playbook -i inventory.ini postgres_dia2.yml --check
+ansible-playbook -i ansible/inventory.ini ansible/postgres_dia2.yml --check
 
 # Execute o playbook para valer
-ansible-playbook -i inventory.ini postgres_dia2.yml
+ansible-playbook -i ansible/inventory.ini ansible/postgres_dia2.yml
 ```
 
 ### 3. Validação
@@ -39,7 +36,7 @@ chmod +x scripts/simulate_traffic.sh
 ```
 
 ## Testes de Interoperabilidade
-
+ 
 Após subir o ambiente com `docker-compose up -d`, você pode validar o funcionamento de cada componente:
 
 ### 1. Nginx (Load Balancer)
@@ -62,7 +59,7 @@ docker exec redis-slave redis-cli get chave
 Crie um tópico e envie uma mensagem.
 ```bash
 # Criar tópico
-docker exec kafka-01 kafka-topics --create --topic teste-topic --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+docker exec kafka-01 kafka-topics --create --topic teste-topic --bootstrap-server kafka-01:29092 --partitions 1 --replication-factor 1
 # Listar tópicos
-docker exec kafka-01 kafka-topics --list --bootstrap-server localhost:9092
+docker exec kafka-01 kafka-topics --list --bootstrap-server kafka-01:29092
 ```

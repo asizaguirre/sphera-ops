@@ -2,14 +2,14 @@
 - name: Operações de Dia 2 - PostgreSQL
   hosts: db_servers
   gather_facts: no
-  become: yes
+  become: no
   vars:
     backup_dir: "/var/backups/postgresql"
     db_name: "ksphera_db"
 
   tasks:
     - name: Instalar Python e dependências (Bootstrap para Docker)
-      raw: apt-get update && apt-get install -y python3 python3-psycopg2 acl
+      raw: apt-get update && apt-get install -y python3 python3-psycopg2 acl sudo
       changed_when: false
 
     - name: Coletar Fatos (após instalação do Python)
@@ -30,6 +30,7 @@
       changed_when: false
 
     - name: Executar Backup (pg_dump)
+      become: yes
       become_user: postgres
       community.postgresql.postgresql_db:
         name: "{{ db_name }}"
@@ -38,6 +39,7 @@
       when: pg_check.rc == 0
 
     - name: Verificar conexões ativas
+      become: yes
       become_user: postgres
       community.postgresql.postgresql_query:
         db: postgres
