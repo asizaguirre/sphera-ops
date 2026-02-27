@@ -42,20 +42,37 @@ check_service() {
 # --- Definição dos Alvos (Baseado no inventory.ini) ---
 
 # 1. Gateway / Load Balancer
-check_service "Nginx Gateway"       "192.168.10.10" "80"
+check_service "Nginx Gateway"       "127.0.0.1" "80"
 
 # 2. Banco de Dados (PostgreSQL)
-check_service "Postgres Primary"    "192.168.10.50" "5432"
-check_service "Postgres Standby"    "192.168.10.51" "5432"
+check_service "Postgres Primary"    "127.0.0.1" "5432"
+check_service "Postgres Standby"    "127.0.0.1" "5433"
 
 # 3. Cache (Redis)
-check_service "Redis Master"        "192.168.10.40" "6379"
-check_service "Redis Replica"       "192.168.10.41" "6379"
+check_service "Redis Master"        "127.0.0.1" "6379"
+check_service "Redis Replica"       "127.0.0.1" "6380"
 
 # 4. Mensageria (Kafka Cluster)
-check_service "Kafka Broker 01"     "192.168.10.60" "9092"
-check_service "Kafka Broker 02"     "192.168.10.61" "9092"
-check_service "Kafka Broker 03"     "192.168.10.62" "9092"
+check_service "Kafka Broker 01"     "127.0.0.1" "9092"
+check_service "Kafka Broker 02"     "127.0.0.1" "9093"
+check_service "Kafka Broker 03"     "127.0.0.1" "9094"
 
 echo "----------------------------------------------------------------"
 echo -e "${YELLOW}Validação concluída.${NC}"
+
+# Executar simulação de tráfego se o script existir
+SIMULATE_SCRIPT="./scripts/simulate_traffic.sh"
+if [ -f "$SIMULATE_SCRIPT" ]; then
+    echo ""
+    echo -e "${YELLOW}Iniciando testes de simulação de tráfego...${NC}"
+    chmod +x "$SIMULATE_SCRIPT"
+    "$SIMULATE_SCRIPT"
+fi
+
+# Executar simulação de comunicação se o script existir
+COMM_SCRIPT="./scripts/simulate_communication.sh"
+if [ -f "$COMM_SCRIPT" ]; then
+    echo ""
+    chmod +x "$COMM_SCRIPT"
+    "$COMM_SCRIPT"
+fi
