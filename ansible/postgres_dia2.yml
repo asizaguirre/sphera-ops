@@ -49,3 +49,10 @@
     - name: Exibir resumo da saúde do banco
       ansible.builtin.debug:
         msg: "Status: Online. Conexões ativas: {{ active_conns.query_result[0].count }}"
+
+    - name: Copiar backup para o host (Controller)
+      become: yes
+      ansible.builtin.fetch:
+        src: "{{ backup_dir }}/backup_{{ ansible_date_time.date }}.sql"
+        dest: "./backups/{{ inventory_hostname }}_backup_{{ ansible_date_time.date }}.sql"
+        flat: yes
